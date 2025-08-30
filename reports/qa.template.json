@@ -1,0 +1,28 @@
+{
+    "task_id": "<id-unico>",
+    "tests_run": [
+        {
+            "name": "<t1>",
+            "status": "pass"
+        }
+    ],
+    "passed": 0,
+    "failed": 0,
+    "coverage": 0.0,
+    "lint_errors": 0,
+    "type_errors": 0,
+    "security_findings": 0,
+    "perf_metrics": {
+        "elapsed_sec_total": 0
+    },
+    "status": "fail",
+    "next_actions": [
+        "<ação objetiva>"
+    ],
+    "artifacts": [
+        "<paths relevantes>"
+    ],
+    "timestamp_start": "<iso8601>",
+    "timestamp_end": "<iso8601>",
+    "elapsed_sec": 0
+}

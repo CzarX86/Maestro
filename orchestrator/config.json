@@ -1,0 +1,75 @@
+{
+    "timezone": "America/Sao_Paulo",
+    "timeouts": {
+        "planner": 120,
+        "coder": 300,
+        "tester": 600,
+        "integrator": 180
+    },
+    "limits": {
+        "max_diff_lines": 1000,
+        "max_files_touched": 50,
+        "min_coverage": 70,
+        "max_lint_errors": 0,
+        "max_type_errors": 0
+    },
+    "policies": {
+        "fail_fast": true,
+        "manual_gate": true,
+        "idempotent_execution": true,
+        "sanitize_logs": true
+    },
+    "telemetry": {
+        "collect_performance": true,
+        "collect_coverage": true,
+        "collect_security_findings": false,
+        "retention_days": 30
+    },
+    "clis": {
+        "planner": {
+            "command": "gemini",
+            "args": [
+                "plan",
+                "--in",
+                "{issue}",
+                "--out-json",
+                "{plan}",
+                "--out-spec",
+                "{spec}"
+            ]
+        },
+        "coder": {
+            "command": "codex",
+            "args": [
+                "code",
+                "--plan",
+                "{plan}",
+                "--spec",
+                "{spec}",
+                "--out",
+                "."
+            ]
+        },
+        "integrator": {
+            "command": "cursor",
+            "args": [
+                "apply",
+                "--from-diff",
+                "{diff}"
+            ]
+        }
+    },
+    "testing": {
+        "lint_command": "ruff check .",
+        "type_check_command": "mypy src",
+        "test_command": "pytest -q --maxfail=1 --disable-warnings --cov=src --cov-report=term",
+        "smoke_test_command": "pytest -q tests/smoke"
+    },
+    "gating": {
+        "require_pass_status": true,
+        "require_zero_lint_errors": true,
+        "require_zero_type_errors": true,
+        "require_min_coverage": true,
+        "require_manual_approval": true
+    }
+}

@@ -1,0 +1,70 @@
+# Regras do Cursor para o Orquestrador "Magro"
+
+## Contexto do Projeto
+Este é um orquestrador determinístico para encadear o ciclo: Planner (Gemini) → Coder (Codex) → Integrator/Runner (Cursor) → Tester → Reporter.
+
+## Padrões de Código
+
+### Shell Scripts
+- Use `set -euo pipefail` para fail fast
+- Funções devem ter nomes descritivos
+- Use `log()` para logging consistente
+- Valide inputs e arquivos antes de usar
+- Use timeouts para comandos externos
+
+### Python Scripts
+- Use type hints quando possível
+- Documente funções com docstrings
+- Use argparse para CLI
+- Trate erros graciosamente
+- Use pathlib para manipulação de paths
+
+### JSON Schemas
+- Valide schemas antes de usar
+- Use camelCase para chaves
+- Inclua timestamps em ISO8601
+- Documente campos obrigatórios vs opcionais
+
+## Estrutura de Arquivos
+- `/issues/` - Issues em Markdown
+- `/handoff/` - Contratos entre etapas
+- `/reports/` - Relatórios QA
+- `/logs/` - Logs de execução
+- `/diffs/` - Patches gerados
+- `/orchestrator/` - Scripts de orquestração
+
+## Convenções de Nomenclatura
+- `task_id` - Identificador único da task
+- `stage` - Etapa do pipeline (plan, code, integrate, test, report)
+- `timestamp` - ISO8601 com timezone
+- `status` - pass, soft-fail, fail
+
+## Segurança
+- Nunca commitar secrets
+- Sanitizar logs antes de salvar
+- Validar inputs de usuário
+- Usar paths relativos quando possível
+
+## Testes
+- Suíte canônica: lint, types, unit/integration
+- Testes de fumaça para build local
+- Cobertura mínima de 70%
+- Zero erros de lint e type checking
+
+## Logging
+- Use timestamps consistentes
+- Inclua task_id em todos os logs
+- Capture stdout/stderr separadamente
+- Use níveis apropriados (INFO, WARN, ERROR)
+
+## Performance
+- Timeouts por etapa: Planner(120s), Coder(300s), Tester(600s)
+- Limite de diff: 1000 linhas
+- Limite de arquivos: 50 por task
+- Fail fast em qualquer erro
+
+## Observabilidade
+- Métricas: tempo, cobertura, erros
+- Artefatos: plan.json, spec.md, qa.json
+- Logs: por etapa e task
+- Status: pass/fail com next_actions

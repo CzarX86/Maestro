@@ -1,0 +1,76 @@
+# Secrets e configurações locais
+secrets/.env
+secrets/*.key
+secrets/*.pem
+secrets/*.crt
+
+# Logs de execução
+logs/*.log
+logs/*.out
+logs/*.err
+
+# Artefatos temporários
+handoff/plan.json
+handoff/spec.md
+reports/qa.json
+diffs/*.diff
+
+# Cache e arquivos temporários
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Arquivos de build
+build/
+dist/
+*.egg-info/
+
+# Testes e cobertura
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Arquivos de backup
+*.bak
+*.backup
+*.tmp
+
+# Arquivos de lock
+package-lock.json
+yarn.lock
+poetry.lock
+
+# Arquivos de configuração local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

@@ -1,0 +1,55 @@
+{
+    "task_id": "<id-unico>",
+    "goal": "<frase curta e objetiva>",
+    "context": [
+        "<bullet 1>",
+        "<bullet 2>"
+    ],
+    "deliverables": [
+        {
+            "path": "<ex: src/module.py>",
+            "purpose": "<função do arquivo>"
+        }
+    ],
+    "apis_or_sdks": [
+        {
+            "name": "<sdk/lib>",
+            "version": "<semver>"
+        }
+    ],
+    "constraints": [
+        "<limite técnico>",
+        "<política de segurança>"
+    ],
+    "acceptance_criteria": [
+        {
+            "name": "<crit 1>",
+            "check": "<como verificar>",
+            "metric": "<número/limiar>"
+        }
+    ],
+    "test_plan": [
+        {
+            "name": "<teste 1>",
+            "input": "<descrição>",
+            "expected": "<saída/efeito>"
+        }
+    ],
+    "risk_checks": [
+        "<checagem obrigatória ex: no secrets>",
+        "lint clean",
+        "types clean"
+    ],
+    "files_to_touch": [
+        "<glob ex: src/**.py>",
+        "tests/**.py"
+    ],
+    "telemetry": [
+        "elapsed_sec",
+        "files_touched",
+        "diff_size",
+        "tests_passed",
+        "tests_failed"
+    ],
+    "notes": "<observações adicionais>"
+}
