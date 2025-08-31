@@ -13,7 +13,7 @@ ts() {
 
 # Função para logging
 log() {
-    echo "[$1] $(ts) $2" | tee -a "logs/${TASK}.${1,,}.log"
+    echo "[$1] $(ts) $2" | tee -a "logs/${TASK}.$(echo $1 | tr '[:upper:]' '[:lower:]').log"
 }
 
 # Função para verificar se arquivo existe
@@ -157,6 +157,16 @@ generate_qa_report() {
         --tests_rc "$3" --tests_out "$(tail -n 80 logs/${TASK}.tests.out)"
 }
 
+# Atualizar documentação com o agente
+update_docs() {
+    log "DOCS" "Atualizando documentação com Documentation Agent"
+    if command -v poetry >/dev/null 2>&1; then
+        poetry run python -m src.maestro.documentation_agent || log "WARN" "Agente de documentação retornou erro"
+    else
+        python3 -m src.maestro.documentation_agent || log "WARN" "Agente de documentação retornou erro"
+    fi
+}
+
 # Função para gate manual
 manual_gate() {
     local qa_file="reports/qa.json"
@@ -214,6 +224,9 @@ main() {
     
     # Etapa 6: REPORT
     generate_qa_report "$lint_rc" "$types_rc" "$tests_rc"
+    
+    # Etapa 6.5: DOCS
+    update_docs
     
     # Etapa 7: GATE
     manual_gate

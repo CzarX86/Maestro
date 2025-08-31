@@ -29,13 +29,8 @@
         "planner": {
             "command": "gemini",
             "args": [
-                "plan",
-                "--in",
-                "{issue}",
-                "--out-json",
-                "{plan}",
-                "--out-spec",
-                "{spec}"
+                "--prompt",
+                "Read the issue file {issue} and create a detailed plan in JSON format. Output the plan to {plan} and a human-readable specification to {spec}."
             ]
         },
         "coder": {

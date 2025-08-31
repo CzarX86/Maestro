@@ -1,0 +1,61 @@
+# 🎭 MAESTRO ORCHESTRATOR - POETRY REMINDER
+# =========================================
+#
+# ⚠️  IMPORTANTE: Este projeto usa Poetry para gerenciamento de dependências Python
+#
+# 📋 REGRAS PARA O CURSOR AI:
+# ---------------------------
+# 1. SEMPRE use 'poetry run' para executar comandos Python
+# 2. NUNCA use 'python' diretamente - sempre 'poetry run python'
+# 3. Para instalar pacotes, use 'poetry add' ao invés de 'pip install'
+# 4. Para scripts, use 'poetry run script.py' ao invés de 'python script.py'
+# 5. Para testes, use 'poetry run pytest' ao invés de 'pytest'
+# 6. Para linting, use 'poetry run ruff' ao invés de 'ruff'
+#
+# 🔧 COMANDOS CORRETOS:
+# ---------------------
+# ✅ poetry run python script.py
+# ✅ poetry run pytest tests/
+# ✅ poetry run ruff check src/
+# ✅ poetry run mypy src/
+# ✅ poetry add package-name
+# ✅ poetry install
+# ✅ poetry shell
+#
+# ❌ COMANDOS INCORRETOS:
+# -----------------------
+# ❌ python script.py
+# ❌ pip install package
+# ❌ pytest tests/
+# ❌ ruff check src/
+#
+# 📁 ESTRUTURA DO PROJETO:
+# ------------------------
+# src/maestro/         - Código fonte principal
+# tests/              - Testes automatizados  
+# dashboard/          - Dashboard web
+# scripts/            - Scripts de desenvolvimento
+# pyproject.toml      - Configuração Poetry
+# poetry.lock         - Lock file das dependências
+#
+# 🚀 COMANDOS MAKE (usam Poetry internamente):
+# --------------------------------------------
+# make install        - poetry install
+# make test          - poetry run pytest
+# make lint          - poetry run ruff
+# make type-check    - poetry run mypy
+# make format        - poetry run black + isort
+# make dashboard     - poetry run python dashboard/server.py
+# make demo          - poetry run python dashboard/demo.py
+# make shell         - poetry shell
+#
+# 📖 DOCUMENTAÇÃO:
+# ---------------
+# Poetry: https://python-poetry.org/docs/
+# Projeto: README.md
+# Dashboard: dashboard/README.md
+#
+# 💡 LEMBRETE:
+# -----------
+# Sempre que sugerir comandos Python, use Poetry!
+# Este arquivo serve como lembrete para o Cursor AI.

@@ -1,0 +1,59 @@
+# Maestro Orchestrator - Poetry Configuration
+# ===========================================
+#
+# Este projeto usa Poetry para gerenciamento de dependências Python.
+# 
+# COMANDOS PRINCIPAIS:
+# -------------------
+# poetry install          - Instalar dependências
+# poetry run <command>    - Executar comando no ambiente Poetry
+# poetry shell           - Ativar ambiente virtual
+# poetry add <package>   - Adicionar nova dependência
+# poetry remove <package> - Remover dependência
+# poetry update          - Atualizar dependências
+# poetry show            - Listar dependências instaladas
+#
+# SCRIPTS DISPONÍVEIS:
+# -------------------
+# poetry run maestro <task>     - Executar orquestrador
+# poetry run dashboard          - Iniciar servidor dashboard
+# poetry run demo              - Executar demo do dashboard
+#
+# COMANDOS MAKE (usam Poetry internamente):
+# ----------------------------------------
+# make install          - Instalar dependências
+# make test            - Executar testes
+# make lint            - Executar linting
+# make type-check      - Verificar tipos
+# make format          - Formatar código
+# make dashboard       - Iniciar dashboard
+# make demo            - Executar demo
+# make shell           - Abrir shell Poetry
+#
+# ESTRUTURA DO PROJETO:
+# --------------------
+# src/maestro/         - Código fonte principal
+# tests/              - Testes automatizados
+# dashboard/          - Dashboard web
+# scripts/            - Scripts de desenvolvimento
+# pyproject.toml      - Configuração Poetry
+# poetry.lock         - Lock file das dependências
+#
+# LEMBRETE IMPORTANTE:
+# -------------------
+# SEMPRE use 'poetry run' para executar comandos Python
+# NUNCA use 'python' diretamente - sempre 'poetry run python'
+# Para desenvolvimento, use 'poetry shell' para ativar o ambiente
+#
+# EXEMPLOS:
+# ---------
+# ❌ python script.py
+# ✅ poetry run python script.py
+#
+# ❌ pip install package
+# ✅ poetry add package
+#
+# ❌ python -m pytest
+# ✅ poetry run pytest
+#
+# Para mais informações: https://python-poetry.org/docs/

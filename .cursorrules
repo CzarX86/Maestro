@@ -1,0 +1,41 @@
+# Cursor Rules - Maestro Project
+
+## 🧪 Testing Strategy
+
+- Use Jest for unit & integration testing of Python/JS components
+- Use Playwright for E2E testing and UI automation
+- Use Puppeteer for browser automation and debugging tasks
+- Always suggest test coverage improvements when editing functions
+- Generate mocks for external dependencies (APIs, DB)
+- Use Testing Playground for reliable selector generation
+
+## 🐞 Debugging Workflow
+
+- Enable Playwright trace viewer by default for failed tests
+- Use Puppeteer DevTools for performance profiling
+- Generate Mermaid diagrams for complex data flows
+- Create CodeTour entries for debugging complex features
+- Capture screenshots and console logs for visual regressions
+
+## 💻 Code Preferences
+
+- Add comments inline whenever possible
+- Structure implementation plans as epics, sprints, and milestones
+- Format project plans as markdown checklists
+- Mark tasks as completed step by step
+- Prefer absolute paths over relative paths
+- Use proactive test suggestions when components are updated
+
+## 🛠️ Environment
+
+- macOS environment (no global pip installations)
+- Poetry for Python dependency management
+- Prefer editing existing files over creating new ones
+- Clean up temporary files after iterations
+
+## 📝 Documentation
+
+- Generate README.md with Mermaid diagrams when relevant
+- Create CodeTour entries for complex features
+- Add .vscode/extensions.json recommendations
+- Include test coverage maps and API flow diagrams
