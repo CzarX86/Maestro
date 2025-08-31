@@ -1,0 +1,302 @@
+name: Maestro Git Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: 'Task ID to process'
+        required: true
+        type: string
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - deploy-staging
+          - deploy-production
+          - rollback
+        default: 'deploy-staging'
+
+concurrency:
+  group: 'maestro-automation-${{ inputs.task_id }}'
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  validate-inputs:
+    runs-on: ubuntu-latest
+    outputs:
+      task_id: ${{ inputs.task_id }}
+      action: ${{ inputs.action }}
+    steps:
+      - name: Validate inputs
+        run: |
+          echo "Task ID: ${{ inputs.task_id }}"
+          echo "Action: ${{ inputs.action }}"
+          
+          if [[ -z "${{ inputs.task_id }}" ]]; then
+            echo "❌ Task ID is required"
+            exit 1
+          fi
+          
+          if [[ ! "${{ inputs.action }}" =~ ^(deploy-staging|deploy-production|rollback)$ ]]; then
+            echo "❌ Invalid action: ${{ inputs.action }}"
+            exit 1
+          fi
+
+  setup-environment:
+    needs: validate-inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          
+      - name: Install dependencies
+        run: |
+          poetry install
+          
+      - name: Verify configuration
+        run: |
+          if [[ ! -f "config/git-automation.json" ]]; then
+            echo "❌ Git automation config not found"
+            exit 1
+          fi
+          
+          if [[ ! -f "src/maestro/git_agent.py" ]]; then
+            echo "❌ Git agent not found"
+            exit 1
+          fi
+          
+          if [[ ! -f "src/maestro/ci_cd_agent.py" ]]; then
+            echo "❌ CI/CD agent not found"
+            exit 1
+          fi
+          
+          echo "✅ Configuration verified"
+
+  git-automation:
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    if: inputs.action == 'deploy-staging'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          
+      - name: Install dependencies
+        run: |
+          poetry install
+          
+      - name: Configure Git
+        run: |
+          git config --global user.name "Maestro Bot"
+          git config --global user.email "maestro-bot@github.actions"
+          
+      - name: Run Git Agent
+        run: |
+          poetry run python src/maestro/git_agent.py ${{ inputs.task_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Check QA Status
+        run: |
+          if [[ -f "reports/qa.json" ]]; then
+            QA_STATUS=$(poetry run python -c "import json; print(json.load(open('reports/qa.json'))['status'])")
+            echo "QA Status: $QA_STATUS"
+            
+            if [[ "$QA_STATUS" == "pass" ]]; then
+              echo "✅ QA passed, proceeding with deployment"
+            else
+              echo "❌ QA failed, skipping deployment"
+              exit 1
+            fi
+          else
+            echo "❌ QA report not found"
+            exit 1
+          fi
+
+  deploy-staging:
+    needs: [setup-environment, git-automation]
+    runs-on: ubuntu-latest
+    if: inputs.action == 'deploy-staging'
+    environment: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          
+      - name: Install dependencies
+        run: |
+          poetry install
+          
+      - name: Run CI/CD Agent
+        run: |
+          poetry run python src/maestro/ci_cd_agent.py deploy-staging ${{ inputs.task_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Deploy to Staging
+        run: |
+          echo "🚀 Deploying to staging environment"
+          echo "Task ID: ${{ inputs.task_id }}"
+          echo "Branch: feature/${{ inputs.task_id }}"
+          
+          # Simulate deployment
+          sleep 10
+          echo "✅ Staging deployment completed"
+          
+      - name: Run Tests on Staging
+        run: |
+          echo "🧪 Running tests on staging environment"
+          
+          # Run smoke tests
+          poetry run pytest tests/smoke/ -v
+          
+          echo "✅ Staging tests passed"
+
+  deploy-production:
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    if: inputs.action == 'deploy-production'
+    environment: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          
+      - name: Install dependencies
+        run: |
+          poetry install
+          
+      - name: Run CI/CD Agent
+        run: |
+          poetry run python src/maestro/ci_cd_agent.py deploy-production ${{ inputs.task_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Deploy to Production
+        run: |
+          echo "🚀 Deploying to production environment"
+          echo "Task ID: ${{ inputs.task_id }}"
+          
+          # Simulate production deployment
+          sleep 15
+          echo "✅ Production deployment completed"
+          
+      - name: Run Tests on Production
+        run: |
+          echo "🧪 Running tests on production environment"
+          
+          # Run full test suite
+          poetry run pytest tests/ -v
+          
+          echo "✅ Production tests passed"
+
+  rollback:
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    if: inputs.action == 'rollback'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          
+      - name: Install dependencies
+        run: |
+          poetry install
+          
+      - name: Run CI/CD Agent
+        run: |
+          poetry run python src/maestro/ci_cd_agent.py rollback ${{ inputs.task_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Rollback Deployment
+        run: |
+          echo "🔄 Rolling back deployment"
+          echo "Task ID: ${{ inputs.task_id }}"
+          
+          # Simulate rollback
+          sleep 5
+          echo "✅ Rollback completed"
+
+  notify:
+    needs: [deploy-staging, deploy-production, rollback]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Notify Success
+        if: success()
+        run: |
+          echo "✅ Maestro automation completed successfully"
+          echo "Task ID: ${{ inputs.task_id }}"
+          echo "Action: ${{ inputs.action }}"
+          
+      - name: Notify Failure
+        if: failure()
+        run: |
+          echo "❌ Maestro automation failed"
+          echo "Task ID: ${{ inputs.task_id }}"
+          echo "Action: ${{ inputs.action }}"
+          
+          # Send notification (could be Slack, email, etc.)
+          echo "Sending failure notification..."

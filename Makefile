@@ -20,7 +20,7 @@ ts = $(shell TZ=$(TIMEZONE) date +"%Y-%m-%dT%H:%M:%S%z")
 # Função para logging
 log = @echo "[$(1)] $(ts) $(2)"
 
-.PHONY: help plan code integrate test report docs docs-update docs-watch stop-docs-watch open-docs-panel dashboard-all all clean validate start-watcher stop-watcher
+.PHONY: help plan code integrate test report docs docs-update docs-watch stop-docs-watch open-docs-panel dashboard-all all clean validate start-watcher stop-watcher git-automation ci-cd-automation rollback-automation
 
 help:
 	@echo "Orquestrador 'magro' - Comandos disponíveis:"
@@ -36,6 +36,11 @@ help:
 	@echo "  make open-docs-panel    - Abrir painel de documentação no navegador"
 	@echo "  make TASK=<id> all      - Executar pipeline completo"
 	@echo "  make clean             - Limpar artefatos temporários"
+	@echo ""
+	@echo "Automação Git/CI-CD:"
+	@echo "  make TASK=<id> git-automation    - Executar automação git (commit/push/PR)"
+	@echo "  make TASK=<id> ci-cd-automation  - Executar automação CI/CD (deploy staging)"
+	@echo "  make TASK=<id> rollback-automation - Executar rollback automático"
 	@echo ""
 	@echo "Exemplo: make TASK=demo all"
 
@@ -267,3 +272,29 @@ status:
 		status=$$(poetry run python -c "import json; print(json.load(open('reports/qa.json'))['status'])"); \
 		echo "Status final: $$status"; \
 	fi
+	@echo "Git Agent: $$(if [ -f src/maestro/git_agent.py ]; then echo "✅"; else echo "❌"; fi)"
+	@echo "CI/CD Agent: $$(if [ -f src/maestro/ci_cd_agent.py ]; then echo "✅"; else echo "❌"; fi)"
+	@echo "Config Git: $$(if [ -f config/git-automation.json ]; then echo "✅"; else echo "❌"; fi)"
+
+# Comandos para automação Git/CI-CD
+git-automation:
+	$(call log,GIT_AUTO,Executando automação git para task=$(TASK))
+	@test -f src/maestro/git_agent.py || (echo "❌ Git Agent não encontrado"; exit 1)
+	@test -f config/git-automation.json || (echo "❌ Configuração git não encontrada"; exit 1)
+	@poetry run python src/maestro/git_agent.py $(TASK)
+	$(call log,GIT_AUTO,Automação git concluída)
+
+ci-cd-automation:
+	$(call log,CI_CD,Executando automação CI/CD para task=$(TASK))
+	@test -f src/maestro/ci_cd_agent.py || (echo "❌ CI/CD Agent não encontrado"; exit 1)
+	@test -f config/git-automation.json || (echo "❌ Configuração git não encontrada"; exit 1)
+	@poetry run python src/maestro/ci_cd_agent.py deploy-staging $(TASK)
+	$(call log,CI_CD,Automação CI/CD concluída)
+
+rollback-automation:
+	$(call log,ROLLBACK,Executando rollback automático para task=$(TASK))
+	@test -f src/maestro/git_agent.py || (echo "❌ Git Agent não encontrado"; exit 1)
+	@test -f src/maestro/ci_cd_agent.py || (echo "❌ CI/CD Agent não encontrado"; exit 1)
+	@poetry run python -c "from src.maestro.git_agent import GitAgent; agent = GitAgent(); agent.rollback_changes('$(TASK)')"
+	@poetry run python src/maestro/ci_cd_agent.py rollback $(TASK)
+	$(call log,ROLLBACK,Rollback automático concluído)

@@ -184,13 +184,85 @@ manual_gate() {
         echo "✅ Task $TASK passou em todos os critérios"
         echo "📋 Revisar reports/qa.json antes do merge"
         echo "🔒 Merge requer aprovação manual"
+        
+        # Executar automação git/CI-CD se QA passar
+        run_git_automation
     else
         log "GATE" "Status FAIL - verificar next_actions"
         echo "❌ Task $TASK falhou - verificar reports/qa.json"
         echo "📋 Próximas ações:"
         python3 -c "import json; print('\n'.join(json.load(open('$qa_file'))['next_actions']))"
+        
+        # Executar rollback se QA falhar
+        run_rollback_automation
         return 1
     fi
+}
+
+# Função para executar automação git/CI-CD
+run_git_automation() {
+    log "GIT_AUTO" "Iniciando automação git/CI-CD"
+    
+    # Verificar se agentes existem
+    if [[ ! -f "src/maestro/git_agent.py" ]] || [[ ! -f "src/maestro/ci_cd_agent.py" ]]; then
+        log "WARN" "Agentes git/CI-CD não encontrados - pulando automação"
+        return 0
+    fi
+    
+    # Executar Git Agent
+    log "GIT_AUTO" "Executando Git Agent"
+    if command -v poetry >/dev/null 2>&1; then
+        poetry run python src/maestro/git_agent.py "$TASK" || log "WARN" "Git Agent retornou erro"
+    else
+        python3 src/maestro/git_agent.py "$TASK" || log "WARN" "Git Agent retornou erro"
+    fi
+    
+    # Executar CI/CD Agent para staging
+    log "GIT_AUTO" "Executando CI/CD Agent para staging"
+    if command -v poetry >/dev/null 2>&1; then
+        poetry run python src/maestro/ci_cd_agent.py "deploy-staging" "$TASK" || log "WARN" "CI/CD Agent retornou erro"
+    else
+        python3 src/maestro/ci_cd_agent.py "deploy-staging" "$TASK" || log "WARN" "CI/CD Agent retornou erro"
+    fi
+    
+    log "GIT_AUTO" "Automação git/CI-CD concluída"
+}
+
+# Função para executar rollback automático
+run_rollback_automation() {
+    log "ROLLBACK" "Iniciando rollback automático"
+    
+    # Verificar se agentes existem
+    if [[ ! -f "src/maestro/git_agent.py" ]] || [[ ! -f "src/maestro/ci_cd_agent.py" ]]; then
+        log "WARN" "Agentes git/CI/CD não encontrados - pulando rollback"
+        return 0
+    fi
+    
+    # Executar rollback no Git Agent
+    log "ROLLBACK" "Executando rollback no Git Agent"
+    if command -v poetry >/dev/null 2>&1; then
+        poetry run python -c "
+from src.maestro.git_agent import GitAgent
+agent = GitAgent()
+agent.rollback_changes('$TASK')
+        " || log "WARN" "Rollback Git Agent retornou erro"
+    else
+        python3 -c "
+from src.maestro.git_agent import GitAgent
+agent = GitAgent()
+agent.rollback_changes('$TASK')
+        " || log "WARN" "Rollback Git Agent retornou erro"
+    fi
+    
+    # Executar rollback no CI/CD Agent
+    log "ROLLBACK" "Executando rollback no CI/CD Agent"
+    if command -v poetry >/dev/null 2>&1; then
+        poetry run python src/maestro/ci_cd_agent.py "rollback" "$TASK" || log "WARN" "Rollback CI/CD Agent retornou erro"
+    else
+        python3 src/maestro/ci_cd_agent.py "rollback" "$TASK" || log "WARN" "Rollback CI/CD Agent retornou erro"
+    fi
+    
+    log "ROLLBACK" "Rollback automático concluído"
 }
 
 # Main execution

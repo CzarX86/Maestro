@@ -1,0 +1,34 @@
+{
+  "git": {
+    "auto_commit": true,
+    "auto_push": true,
+    "auto_pr": true,
+    "branch_prefix": "feature/",
+    "commit_message_template": "feat: {task_id} - {description}",
+    "max_commit_size": 200,
+    "allowed_paths": ["src/maestro/**", ".github/workflows/**", "config/**"],
+    "exclude_patterns": ["*.env", "secrets/*", "*.key", "*.log", "*.tmp"]
+  },
+  "ci_cd": {
+    "auto_deploy_staging": true,
+    "auto_deploy_production": false,
+    "staging_environment": "staging",
+    "production_environment": "production",
+    "rollback_on_failure": true,
+    "deploy_timeout": 300,
+    "github_actions_workflow": "maestro-automation.yml"
+  },
+  "security": {
+    "require_manual_approval": true,
+    "exclude_secrets": true,
+    "exclude_patterns": ["*.env", "secrets/*", "*.key"],
+    "max_diff_lines": 1000,
+    "require_qa_pass": true
+  },
+  "logging": {
+    "log_level": "INFO",
+    "log_file": "logs/git-automation.log",
+    "structured_logging": true,
+    "retention_days": 30
+  }
+}
