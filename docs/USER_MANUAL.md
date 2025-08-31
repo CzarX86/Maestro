@@ -63,27 +63,27 @@ graph TB
         B[Configuração]
         C[Secrets]
     end
-
+    
     subgraph "Pipeline Principal"
         D[Planner<br/>Gemini CLI]
         E[Coder<br/>Codex CLI]
         F[Integrator<br/>Cursor CLI]
         G[Tester<br/>Canônico]
     end
-
+    
     subgraph "Artefatos"
         H[plan.json]
         I[spec.md]
         J[diffs/*.diff]
         K[qa.json]
     end
-
+    
     subgraph "Monitoramento"
         L[Logs]
         M[Dashboard]
         N[Telemetria]
     end
-
+    
     A --> D
     B --> D
     C --> D
@@ -112,32 +112,32 @@ graph LR
         B[Dashboard Web]
         C[CLI Commands]
     end
-
+    
     subgraph "Orquestrador Core"
         D[orchestrate.sh]
         E[write_qa.py]
         F[validate.sh]
         G[watcher.sh]
     end
-
+    
     subgraph "Ferramentas de IA"
         H[Gemini CLI]
         I[Codex CLI]
         J[Cursor CLI]
     end
-
+    
     subgraph "Qualidade"
         K[Ruff Linter]
         L[MyPy Type Checker]
         M[Pytest]
     end
-
+    
     subgraph "Gerenciamento"
         N[Poetry]
         O[Config JSON]
         P[Secrets]
     end
-
+    
     A --> D
     B --> D
     C --> D
@@ -167,17 +167,17 @@ flowchart TD
     C --> D[Geração de Plano]
     D --> E[plan.json]
     D --> F[spec.md]
-
+    
     subgraph "Entrada"
         A
     end
-
+    
     subgraph "Processamento"
         B
         C
         D
     end
-
+    
     subgraph "Saída"
         E
         F
@@ -185,7 +185,6 @@ flowchart TD
 ```
 
 **Artefatos Gerados**:
-
 - `plan.json`: Plano estruturado em JSON
 - `spec.md`: Especificação técnica detalhada
 
@@ -201,19 +200,19 @@ flowchart TD
     D --> E[Geração de Código]
     E --> F[Geração de Testes]
     F --> G[diff file]
-
+    
     subgraph "Entrada"
         A
         C
     end
-
+    
     subgraph "Processamento"
         B
         D
         E
         F
     end
-
+    
     subgraph "Saída"
         G
     end
@@ -230,7 +229,7 @@ flowchart TD
     C --> D[Build Local]
     D --> E[Testes de Fumaça]
     E --> F[Validação]
-
+    
     subgraph "Processo"
         C
         D
@@ -250,14 +249,14 @@ flowchart TD
     C --> D[Testes Unitários]
     D --> E[Cobertura]
     E --> F[Relatório QA]
-
+    
     subgraph "Validações"
         B
         C
         D
         E
     end
-
+    
     subgraph "Saída"
         F
     end
@@ -284,28 +283,28 @@ sequenceDiagram
     M->>P: Executar planejamento
     P->>P: Analisar issue
     P->>M: Retornar plan.json + spec.md
-
+    
     M->>C: Executar geração de código
     C->>C: Gerar código + testes
     C->>M: Retornar diff file
-
+    
     M->>I: Executar integração
     I->>I: Aplicar mudanças
     I->>I: Build local
     I->>I: Testes de fumaça
     I->>M: Confirmar integração
-
+    
     M->>T: Executar testes canônicos
     T->>T: Linting
     T->>T: Type checking
     T->>T: Testes unitários
     T->>T: Cobertura
     T->>M: Retornar resultados
-
+    
     M->>R: Gerar relatório QA
     R->>R: Analisar resultados
     R->>M: Retornar qa.json
-
+    
     M->>D: Atualizar dashboard
     D->>U: Mostrar status final
 ```
@@ -325,13 +324,13 @@ stateDiagram-v2
     Testando --> Testado: testes executados
     Testado --> Reportando: make report
     Reportando --> Concluído: qa.json gerado
-
+    
     Planejando --> Falha: timeout/erro
     Codificando --> Falha: timeout/erro
     Integrando --> Falha: timeout/erro
     Testando --> Falha: testes falharam
     Reportando --> Falha: erro no relatório
-
+    
     Falha --> [*]
     Concluído --> [*]
 ```
@@ -349,19 +348,19 @@ graph TB
         B[WebSocket Client]
         C[Charts/Graphs]
     end
-
+    
     subgraph "Backend"
         D[WebSocket Server]
         E[File Watcher]
         F[Data Processor]
     end
-
+    
     subgraph "Data Sources"
         G[reports/qa.json]
         H[logs/*.log]
         I[handoff/*.json]
     end
-
+    
     A --> B
     B --> D
     D --> E
@@ -406,13 +405,13 @@ flowchart LR
     C --> D[WebSocket Server]
     D --> E[WebSocket Client]
     E --> F[UI Components]
-
+    
     subgraph "Eventos"
         G[qa.json updated]
         H[log file changed]
         I[config changed]
     end
-
+    
     G --> B
     H --> B
     I --> B
@@ -433,25 +432,25 @@ graph TD
     A --> F[CLIs]
     A --> G[Testing]
     A --> H[Gating]
-
+    
     B --> B1[planner: 120s]
     B --> B2[coder: 300s]
     B --> B3[tester: 600s]
     B --> B4[integrator: 180s]
-
+    
     C --> C1[max_diff_lines: 1000]
     C --> C2[max_files_touched: 50]
     C --> C3[min_coverage: 70]
     C --> C4[max_lint_errors: 0]
-
+    
     D --> D1[fail_fast: true]
     D --> D2[manual_gate: true]
     D --> D3[idempotent_execution: true]
-
+    
     F --> F1[planner: gemini]
     F --> F2[coder: codex]
     F --> F3[integrator: cursor]
-
+    
     G --> G1[lint_command: ruff]
     G --> G2[type_check_command: mypy]
     G --> G3[test_command: pytest]
@@ -464,15 +463,15 @@ flowchart TD
     A[CLI Configuration] --> B[Planner CLI]
     A --> C[Coder CLI]
     A --> D[Integrator CLI]
-
+    
     B --> B1[Command: gemini]
     B --> B2[Args: plan --in {issue}]
     B --> B3[Output: plan.json, spec.md]
-
+    
     C --> C1[Command: codex]
     C --> C2[Args: code --plan {plan}]
     C --> C3[Output: diff file]
-
+    
     D --> D1[Command: cursor]
     D --> D2[Args: apply --from-diff {diff}]
     D --> D3[Output: applied changes]
@@ -492,27 +491,27 @@ graph TD
     A --> E[pipeline-test]
     A --> F[report]
     A --> G[all]
-
+    
     B --> B1[Validar]
     B --> B2[Executar Gemini]
     B --> B3[Gerar plan.json]
-
+    
     C --> C1[Validar plan.json]
     C --> C2[Executar Codex]
     C --> C3[Gerar diff]
-
+    
     D --> D1[Validar diff]
     D --> D2[Executar Cursor]
     D --> D3[Build local]
-
+    
     E --> E1[Linting]
     E --> E2[Type checking]
     E --> E3[Testes]
-
+    
     F --> F1[Analisar resultados]
     F --> F2[Gerar qa.json]
     F --> F3[Status final]
-
+    
     G --> G1[Executar todos]
     G --> G2[Sequencial]
     G --> G3[Fail fast]
@@ -547,11 +546,11 @@ mindmap
 flowchart LR
     A[make status] --> B[Verificar arquivos]
     B --> C[Mostrar status]
-
+    
     D[make dashboard] --> E[Iniciar servidor]
     E --> F[WebSocket]
     F --> G[Interface web]
-
+    
     H[make demo] --> I[Executar demo]
     I --> J[Simular pipeline]
     J --> K[Mostrar resultados]
@@ -570,19 +569,19 @@ graph TB
     C --> D[File Storage]
     D --> E[Log Analysis]
     E --> F[Dashboard]
-
+    
     subgraph "Log Types"
         G[plan.log]
         H[code.log]
         I[integrate.log]
         J[test.log]
     end
-
+    
     B --> G
     B --> H
     B --> I
     B --> J
-
+    
     G --> D
     H --> D
     I --> D
@@ -596,19 +595,19 @@ flowchart TD
     A[Execution Data] --> B[Performance Metrics]
     A --> C[Quality Metrics]
     A --> D[Error Metrics]
-
+    
     B --> B1[Execution Time]
     B --> B2[Memory Usage]
     B --> B3[CPU Usage]
-
+    
     C --> C1[Test Coverage]
     C --> C2[Lint Errors]
     C --> C3[Type Errors]
-
+    
     D --> D1[Failure Rate]
     D --> D2[Error Types]
     D --> D3[Recovery Time]
-
+    
     B1 --> E[Metrics Aggregator]
     B2 --> E
     B3 --> E
@@ -618,7 +617,7 @@ flowchart TD
     D1 --> E
     D2 --> E
     D3 --> E
-
+    
     E --> F[Reports]
     E --> G[Dashboard]
     E --> H[Alerts]
@@ -632,12 +631,12 @@ graph LR
     C[Lint Results] --> B
     D[Type Check Results] --> B
     E[Coverage Results] --> B
-
+    
     B --> F[qa.json]
     F --> G[Status Analysis]
     G --> H[Next Actions]
     H --> I[Gate Decision]
-
+    
     subgraph "QA Report Structure"
         J[status: pass/fail]
         K[elapsed_sec: number]
@@ -660,27 +659,27 @@ flowchart TD
     B --> D[code.log]
     B --> E[integrate.log]
     B --> F[test.log]
-
+    
     C --> G{Planner Error?}
     G --> H[Check CLI]
     G --> I[Check Timeout]
     G --> J[Check Issue Format]
-
+    
     D --> K{Coder Error?}
     K --> L[Check CLI]
     K --> M[Check Plan Format]
     K --> N[Check Timeout]
-
+    
     E --> O{Integrator Error?}
     O --> P[Check CLI]
     O --> Q[Check Diff Size]
     O --> R[Check Build]
-
+    
     F --> S{Tester Error?}
     S --> T[Check Dependencies]
     S --> U[Check Test Code]
     S --> V[Check Coverage]
-
+    
     H --> W[Solution Applied]
     I --> W
     J --> W
@@ -729,15 +728,15 @@ flowchart LR
     A[Quick Fixes] --> B[CLI Issues]
     A --> C[Config Issues]
     A --> D[Dependency Issues]
-
+    
     B --> B1[Install CLI]
     B --> B2[Check PATH]
     B --> B3[Update CLI]
-
+    
     C --> C1[Validate JSON]
     C --> C2[Check Secrets]
     C --> C3[Fix Paths]
-
+    
     D --> D1[poetry install]
     D --> D2[poetry update]
     D --> D3[Clear cache]
@@ -850,15 +849,15 @@ flowchart LR
     A[Pipeline Config] --> B[Timeouts]
     A --> C[Limits]
     A --> D[Quality Gates]
-
+    
     B --> B1[Realistic timeouts]
     B --> B2[Account for complexity]
     B --> B3[Monitor performance]
-
+    
     C --> C1[Reasonable diff limits]
     C --> C2[File count limits]
     C --> C3[Coverage thresholds]
-
+    
     D --> D1[Zero lint errors]
     D --> D2[Zero type errors]
     D --> D3[Minimum coverage]
@@ -872,19 +871,19 @@ graph TB
     B --> C[Performance Tracking]
     B --> D[Quality Tracking]
     B --> E[Error Tracking]
-
+    
     C --> C1[Execution Time]
     C --> C2[Success Rate]
     C --> C3[Resource Usage]
-
+    
     D --> D1[Coverage Trends]
     D --> D2[Error Rates]
     D --> D3[Quality Scores]
-
+    
     E --> E1[Error Types]
     E --> E2[Recovery Time]
     E --> E3[Root Causes]
-
+    
     C1 --> F[Dashboard]
     C2 --> F
     C3 --> F
@@ -941,27 +940,24 @@ Para dúvidas ou suporte, consulte a documentação ou abra uma issue no reposit
 
 <!-- BEGIN AUTO-DOC: DocumentationAgent -->
 
-## 📚 Documentation Status 🟡
+## 📚 Documentation Status 🔴
 
-- Task: `auto-documentation`
-- Status: `soft-fail`
-- Tests: `12` passed, `3` failed
-- Coverage: `87.5%`
-- Lint errors: `0` | Type errors: `1`
-- Last updated: `2025-08-31T05:02:09.363147Z`
+- Task: `demo`
+- Status: `fail`
+- Tests: `16` passed, `0` failed
+- Coverage: `41.0%`
+- Lint errors: `1` | Type errors: `10`
+- Last updated: `2025-08-31T05:12:58.812066Z`
 
 ### Next Actions
-
-- Fix failing test in test_documentation_agent.py
-- Resolve type error in documentation_agent.py line 156
-- Add integration test for dashboard panel
+- Corrigir erros de linting
+- Corrigir erros de type checking
+- Corrigir testes falhando
 
 ### Objetivo (Spec)
-
 Sistema de documentação automática que atualiza README.md, USER_MANUAL.md e USAGE.md baseado nas mudanças de código e relatórios QA gerados pelo pipeline
 
 ### Escopo incluído (Spec)
-
 - Agente de documentação que analisa reports/qa.json
 - Atualização automática de README.md com novas features
 - Atualização automática de USER_MANUAL.md com novos comandos/configurações
@@ -971,14 +967,12 @@ Sistema de documentação automática que atualiza README.md, USER_MANUAL.md e U
 - Templates de documentação baseados em plan.json e spec.md
 
 ### Escopo excluído (Spec)
-
 - Documentação de APIs externas
 - Geração de diagramas complexos
 - Tradução automática de documentação
 - Versionamento de documentação histórica
 
 ### Critérios de aceitação (Spec)
-
 - [ ] Agente detecta mudanças em reports/qa.json automaticamente
 - [ ] README.md é atualizado com novas features implementadas
 - [ ] USER_MANUAL.md é atualizado com novos comandos/configurações
@@ -990,7 +984,6 @@ Sistema de documentação automática que atualiza README.md, USER_MANUAL.md e U
 - [ ] Sistema funciona com múltiplas tasks simultâneas
 
 ### Plano (Steps)
-
 - setup_structure: Criar a estrutura de diretórios e arquivos vazios para a nova funcionalidade de documentação automática.
 - create_templates: Copiar conteúdo existente dos arquivos de documentação para os novos templates para servir como base.
 - implement_documentation_agent: Implementar o agente de documentação em `src/maestro/documentation_agent.py`. O agente será responsável por ler os relatórios de QA, processar os dados e atualizar os arquivos de documentação usando os templates.

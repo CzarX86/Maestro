@@ -84,7 +84,7 @@ apply_diff() {
         fi
         
         # Aplicar diff
-        if cursor apply --from-diff "$diff_file"; then
+        if git apply "$diff_file"; then
             log "INTEGRATE" "Diff aplicado com sucesso"
         else
             log "ERROR" "Falha ao aplicar diff"
@@ -100,7 +100,7 @@ run_smoke_tests() {
     log "INTEGRATE" "Executando testes de fumaça"
     
     # Build local
-    if cursor run "pip install -e ."; then
+    if poetry install; then
         log "INTEGRATE" "Build local bem-sucedido"
     else
         log "ERROR" "Build local falhou"
@@ -108,7 +108,7 @@ run_smoke_tests() {
     fi
     
     # Testes de fumaça
-    if cursor run "pytest -q tests/smoke || true"; then
+    if poetry run pytest -q tests/smoke || true; then
         log "INTEGRATE" "Testes de fumaça concluídos"
     else
         log "WARN" "Testes de fumaça falharam - continuando"
@@ -122,19 +122,19 @@ run_canonical_tests() {
     # Linting
     log "TEST" "Executando linting"
     set +e
-    ruff_out=$(ruff check . 2>&1); ruff_rc=$?
+    ruff_out=$(poetry run ruff check . 2>&1); ruff_rc=$?
     set -e
     
     # Type checking
     log "TEST" "Executando type checking"
     set +e
-    mypy_out=$(mypy src 2>&1); mypy_rc=$?
+    mypy_out=$(poetry run mypy src 2>&1); mypy_rc=$?
     set -e
     
     # Unit/Integration tests
     log "TEST" "Executando testes unitários/integração"
     set +e
-    pytest_out=$(pytest -q --maxfail=1 --disable-warnings --cov=src --cov-report=term 2>&1); pytest_rc=$?
+    pytest_out=$(poetry run pytest -q --maxfail=1 --disable-warnings --cov=src --cov-report=term 2>&1); pytest_rc=$?
     set -e
     
     # Salvar outputs para análise
@@ -202,7 +202,7 @@ main() {
     
     # Etapa 2: PLAN
     log "PLAN" "Iniciando planejamento"
-    run_with_timeout 120 "PLAN" gemini plan --in "$ISSUE" --out-json handoff/plan.json --out-spec handoff/spec.md
+    run_with_timeout 120 "PLAN" gemini --prompt "Read the issue file $ISSUE and create a detailed plan in JSON format. Output the plan to handoff/plan.json and a human-readable specification to handoff/spec.md."
     
     # Validar plan.json gerado
     check_file "handoff/plan.json"
@@ -210,7 +210,7 @@ main() {
     
     # Etapa 3: CODE
     log "CODE" "Iniciando geração de código"
-    run_with_timeout 300 "CODE" codex code --plan handoff/plan.json --spec handoff/spec.md --out .
+    run_with_timeout 300 "CODE" codex exec "Read the plan from handoff/plan.json and spec from handoff/spec.md, then generate the required code files in the current directory."
     
     # Etapa 4: INTEGRATE
     log "INTEGRATE" "Iniciando integração"

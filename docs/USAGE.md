@@ -595,19 +595,19 @@ poetry run isort src/ tests/
 
 <!-- BEGIN AUTO-DOC: DocumentationAgent -->
 
-## 📚 Documentation Status 🟡
+## 📚 Documentation Status 🔴
 
-- Task: `auto-documentation`
-- Status: `soft-fail`
-- Tests: `12` passed, `3` failed
-- Coverage: `87.5%`
-- Lint errors: `0` | Type errors: `1`
-- Last updated: `2025-08-31T05:02:09.363147Z`
+- Task: `demo`
+- Status: `fail`
+- Tests: `16` passed, `0` failed
+- Coverage: `41.0%`
+- Lint errors: `1` | Type errors: `10`
+- Last updated: `2025-08-31T05:12:58.812066Z`
 
 ### Next Actions
-- Fix failing test in test_documentation_agent.py
-- Resolve type error in documentation_agent.py line 156
-- Add integration test for dashboard panel
+- Corrigir erros de linting
+- Corrigir erros de type checking
+- Corrigir testes falhando
 
 ### Objetivo (Spec)
 Sistema de documentação automática que atualiza README.md, USER_MANUAL.md e USAGE.md baseado nas mudanças de código e relatórios QA gerados pelo pipeline
